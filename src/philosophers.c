@@ -6,7 +6,7 @@
 /*   By: rakhsas <rakhsas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:28:51 by rakhsas           #+#    #+#             */
-/*   Updated: 2023/02/16 13:13:43 by rakhsas          ###   ########.fr       */
+/*   Updated: 2023/02/16 15:17:26 by rakhsas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	*routine(void *arg)
 {
+	t_main dt = *(t_main *)arg;
 	printf("Philosopher is Eating\n");
+	printf("index of number: %d\n", dt.state->id);
 	return (NULL);
 }
 
@@ -25,15 +27,22 @@ void	create(t_main *dt)
 	i = 0;
 	while (i < dt->number_of_philosophers)
 	{
-		if (pthread_create(&dt->state->philo[i], NULL, &routine, NULL) != 0)
+		pthread_mutex_lock(dt->state->print);
+		if (pthread_create(&dt->state->philo[i], NULL, &routine, dt) != 0)
+		{
 			return ;
+		}
+		dt->state->id = i;
+		pthread_mutex_unlock(dt->state->print);
 		i++;
 	}
 	i = 0;
 	while (i < dt->number_of_philosophers)
 	{
+		pthread_mutex_lock(dt->state->print);
 		if (pthread_join(dt->state->philo[i], NULL))
 			return ;
+		pthread_mutex_unlock(dt->state->print);
 		i++;
 	}
 }
@@ -44,12 +53,18 @@ void	create_philosophers(t_main *dt)
 
 	dt->state = malloc(sizeof(t_phils) * dt->number_of_philosophers);
 	dt->state->philo = malloc(sizeof(t_phils) * dt->number_of_philosophers);
-	dt->state->forks = malloc(
-			sizeof(pthread_mutex_t) * dt->number_of_philosophers);
+	dt->state->forks = malloc(sizeof(pthread_mutex_t) * dt->number_of_philosophers);
+	dt->state->print = malloc(sizeof(pthread_mutex_t) * dt->number_of_philosophers);
 	i = -1;
+	pthread_mutex_lock(dt->state->print);
 	while (++i < dt->number_of_philosophers)
 		pthread_mutex_init(&dt->state->forks[i], NULL);
+	pthread_mutex_unlock(dt->state->print);
 	create(dt);
+	free(dt->state->print);
+	free(dt->state->forks);
+	free(dt->state->philo);
+	free(dt->state);
 }
 
 int	main(int ac, char **av)
