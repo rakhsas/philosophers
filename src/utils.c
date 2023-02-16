@@ -1,24 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakhsas <rakhsas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/08 17:28:51 by rakhsas           #+#    #+#             */
-/*   Updated: 2023/02/08 21:16:07 by rakhsas          ###   ########.fr       */
+/*   Created: 2023/02/14 09:58:56 by rakhsas           #+#    #+#             */
+/*   Updated: 2023/02/14 09:59:09 by rakhsas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "../include/philosophers.h"
 
-int	main(int ac, char **av)
+int	ft_atoi(char *c)
 {
-	if (ac == 6)
+	int	res;
+	int	sym;
+	int	i;
+
+	i = 0;
+	res = 0;
+	sym = 1;
+	if (!c)
+		return (0);
+	if (c[0] == '-' || c[0] == '+')
 	{
-		(void)av;
-		printf("653");
-		exit(1);
+		if (c[0] == '-')
+			sym *= -1;
 	}
-	printf("sir tl3b");
+	while (c[i] && c[i] >= '0' && c[i] <= '9')
+	{
+		res = 10 * res + c[i] - '0';
+		i++;
+	}
+	if (res * sym > INT_MAX)
+		return (-1);
+	return (res * sym);
 }
