@@ -1,6 +1,6 @@
 NAME = philo
 DIR = src
-SRC = $(DIR)/philosophers.c $(DIR)/error.c $(DIR)/utils.c
+SRC = $(DIR)/philosophers.c $(DIR)/error.c $(DIR)/utils.c $(DIR)/time.c
 CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
 OBJS = $(SRC:.c=.o)
 RM = rm -f

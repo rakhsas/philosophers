@@ -6,7 +6,7 @@
 /*   By: rakhsas <rakhsas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:29:16 by rakhsas           #+#    #+#             */
-/*   Updated: 2023/02/16 15:10:47 by rakhsas          ###   ########.fr       */
+/*   Updated: 2023/02/17 15:25:28 by rakhsas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,32 +17,44 @@
 # include "string.h"
 # include "stdlib.h"
 # include "unistd.h"
+# include "sys/time.h"
 # include "limits.h"
 # include "pthread.h"
 
-typedef struct t_philo
+typedef struct s_philo
 {
 	int				id;
-	int				last_eat;
-	int				index_l_fork;
-	int				index_r_fork;
-	struct t_vars	*p;
-	pthread_t		*philo;
-	pthread_mutex_t	*print;
-	pthread_mutex_t	*forks;
-}	t_phils;
-typedef struct t_vars
+	pthread_t		thread;
+	long long		last_eat;
+	long long		limit_eat;
+	int				nbr_eat;
+	pthread_mutex_t	m_eating;
+	int				l_fork;
+	int				r_fork;
+	struct s_main	*status;
+}	t_philo;
+
+typedef struct s_main
 {
-	int			time_to_die;
-	int			time_to_eat;
-	int			time_to_sleep;
-	int			number_of_time_eating;
-	int			number_of_philosophers;
-	long long	time;
-	t_phils		*state;
+	int				nbr_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nbr_eat;
+	long long		time;
+	t_philo			*philos;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	m_print;
 }	t_main;
 
+typedef struct s_args
+{
+	t_main	*status;
+	t_philo	*philo;
+}	t_args;
+
+long	get_time(void);
 int		ft_atoi(char *c);
 int		error_occur(int ac, char **av, t_main *data);
-void	initialize_args(int ac, char **av, t_main *data);
+void		initialize_args(int ac, char **av, t_main *data);
 #endif
