@@ -6,11 +6,11 @@
 /*   By: rakhsas <rakhsas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 09:18:43 by rakhsas           #+#    #+#             */
-/*   Updated: 2023/02/17 12:15:36 by rakhsas          ###   ########.fr       */
+/*   Updated: 2023/02/19 19:04:35 by rakhsas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philosophers.h"
+#include "../include/philo.h"
 
 void	initialize_args(int ac, char **av, t_main *data)
 {
@@ -20,6 +20,8 @@ void	initialize_args(int ac, char **av, t_main *data)
 	data->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
 		data->nbr_eat = ft_atoi(av[5]);
+	else
+		data->nbr_eat = -1;
 }
 
 int	error_occur(int ac, char **av, t_main *data)
@@ -33,4 +35,30 @@ int	error_occur(int ac, char **av, t_main *data)
 		return (-1);
 	}
 	return (1);
+}
+
+int	check_for_death(t_main *dt)
+{
+	int	i;
+
+	while (1)
+	{
+		i = -1;
+		while (++i < dt->nbr_philo)
+		{
+			pthread_mutex_lock(&dt->m_protect);
+			if (get_time() - dt->philos[i].last_eat
+				> dt->time_to_die)
+			{
+				pthread_mutex_unlock(&dt->m_protect);
+				// printf("%lld\n", get_time() - dt->philos[i].last_eat);
+				print_msg(RED, &dt->philos[i], DIED);
+				ft_clear(dt);
+				return (0);
+			}
+			if (dt->nbr_eat != -1 && dt->philos[i].count > dt->nbr_eat)
+				return (0);
+			pthread_mutex_unlock(&dt->m_protect);
+		}
+	}
 }
